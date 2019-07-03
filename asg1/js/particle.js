@@ -46,6 +46,7 @@ var Particle = function (position) {
     this.scale = random(0, 1);
     this.speed = createVector(0, random(0, 10));
     this.color = [random(0, 255), random(0, 255), random(0, 255)];
+    this.lifetime = 240000;
 }
 
 var theyExpand = 1;
@@ -53,11 +54,12 @@ var theyExpand = 1;
 // use FFT bin level to change speed and diameter
 Particle.prototype.update = function (someLevel) {
     this.position.y += this.speed.y / (someLevel * 2);
-    if (this.position.y > height) {
+    if (this.lifetime < 0 || this.position.y > height) {
         this.position.y = 0;
+        this.lifetime = 240000;
     }
     this.diameter = map(someLevel, 0, 1, 0, 100) * this.scale * theyExpand;
-
+    this.lifetime -= 1;
 }
 
 Particle.prototype.draw = function () {
@@ -66,4 +68,8 @@ Particle.prototype.draw = function () {
         this.position.x, this.position.y,
         this.diameter, this.diameter
     );
+}
+
+Particle.prototype.isDead = function () {
+    return this.lifetime < 0;
 }
