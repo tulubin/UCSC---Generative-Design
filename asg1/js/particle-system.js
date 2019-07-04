@@ -1,10 +1,11 @@
 // ParticleSystem:
 // Code originally from https://github.com/therewasaguy/p5-music-viz/blob/master/demos/05a_fft_particle_system/sketch.js
 
-let ParticleSystem = function (particles) {
+let ParticleSystem = function () {
     for (var i = 0; i < particles.length; i++) {
         var x = map(i, 0, binCount, 0, width * 2);
-        var y = random(0, height);
+        // var y = random(0, height);
+        var y = 0;
         var position = createVector(x, y);
         particles[i] = new Particle(position);
         // this.particles.push(new Particle(this.origin));
@@ -17,18 +18,17 @@ let ParticleSystem = function (particles) {
 
 // };
 
-ParticleSystem.prototype.run = function (particles) {
+ParticleSystem.prototype.run = function () {
     for (var i = 0; i < binCount; i++) {
-        var thisLevel = map(spectrum[i], 0, 255, 0, 1);
+        var level = map(spectrum[i], 0, 255, 0, 1);
 
         // update values based on amplitude at this part of the frequency spectrum
-        particles[i].update(thisLevel);
-
+        particles[i].update(level);
         // draw the particle
         particles[i].draw();
 
         // update x position (in case we change the bin count while live coding)
-        particles[i].position.x = map(i, 0, binCount, 0, width * 2);
+        particles[i].position.x = map(i, 0, binCount / 2, 0, width);
     }
 
     // for (let i = this.particles.length - 1; i >= 0; i--) {

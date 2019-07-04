@@ -4,7 +4,7 @@
 let soundFile;
 let fft;
 let smoothing = 0.5; // play with this, between 0 and .99
-let binCount = 128; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
+let binCount = 64; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
 let particles = new Array(binCount);
 let spectrum;
 let particleSystem;
@@ -25,7 +25,7 @@ function setup() {
     fft = new p5.FFT(smoothing, binCount);
     fft.setInput(soundFile);
 
-    particleSystem = new ParticleSystem(particles);
+    particleSystem = new ParticleSystem();
     // particleSystem = new ParticleSystem(createVector(width / 2, 50))
 
     // instantiate the particles.
@@ -35,10 +35,16 @@ function setup() {
     //     let position = createVector(x, y);
     //     particles[i] = new Particle(position);
     // }
+
 }
 
 function draw() {
     background('white');
+
+    if (paused) {
+        textSize(32);
+        text('Click To Play', windowWidth/2, windowHeight/2);
+    }
     // particleSystem.addParticle();
 
     // background(0, 0, 0, 100);
@@ -46,7 +52,7 @@ function draw() {
     // returns an array with [binCount] amplitude readings from lowest to highest frequencies
     spectrum = fft.analyze(binCount);
 
-    particleSystem.run(particles);
+    particleSystem.run();
     // update and draw all [binCount] particles!
     // Each particle gets a level that corresponds to
     // the level at one bin of the FFT spectrum. 

@@ -39,35 +39,40 @@
 // Particle.prototype.isDead = function () {
 //     return this.lifetime < 0;
 // };
-
+let MAX_LIFETIME = 10;
 
 var Particle = function (position) {
     this.position = position;
-    this.scale = random(0, 1);
-    this.speed = createVector(0, random(0, 10));
+    this.scale = random(0.2, 0.5);
+    this.speed = random(0, 15);
     this.color = [random(0, 255), random(0, 255), random(0, 255)];
-    this.lifetime = 240000;
+    this.lifetime = MAX_LIFETIME;
 }
 
-var theyExpand = 1;
 
 // use FFT bin level to change speed and diameter
-Particle.prototype.update = function (someLevel) {
-    this.position.y += this.speed.y / (someLevel * 2);
+Particle.prototype.update = function (level) {
+    this.position.y += this.speed / map(level, 0, 1, 0, 5);
     if (this.lifetime < 0 || this.position.y > height) {
         this.position.y = 0;
-        this.lifetime = 240000;
+        this.lifetime = MAX_LIFETIME;
     }
-    this.diameter = map(someLevel, 0, 1, 0, 100) * this.scale * theyExpand;
-    this.lifetime -= 1;
+    
+    this.diameter = map(level, 0, 1, 0, 200) * this.scale * MAX_LIFETIME / Math.max(1, this.lifetime);
+    this.lifetime -= map(level, 0, 1, 0, MAX_LIFETIME / 60);
 }
 
 Particle.prototype.draw = function () {
     fill(this.color);
     ellipse(
         this.position.x, this.position.y,
-        this.diameter, this.diameter
+        2, this.diameter
     );
+    ellipse(
+        this.position.x, this.position.y,
+        this.diameter, 2
+    );
+    // rotate(PI / 2);
 }
 
 Particle.prototype.isDead = function () {
