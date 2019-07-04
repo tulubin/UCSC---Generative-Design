@@ -1,5 +1,5 @@
 let myImg = document.getElementById("myImg");
-let clicked = false;
+let clicked = true;
 myImg.onclick = function () {
     if (clicked) {
         let myName = document.getElementById("myName");
