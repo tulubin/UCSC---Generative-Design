@@ -4,11 +4,12 @@
 let soundFile;
 let fft;
 let smoothing = 0.5; // play with this, between 0 and .99
-let binCount = 64; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
+let binCount = 128; // size of resulting FFT array. Must be a power of 2 between 16 an 1024
 let particles = new Array(binCount);
 let spectrum;
 let particleSystem;
 let paused = 1;
+
 function preload() {
     soundFormats('mp3', 'ogg');
     soundFile = loadSound('assets/audio/BGM.mp3');
@@ -43,7 +44,7 @@ function draw() {
 
     if (paused) {
         textSize(32);
-        text('Click To Play', windowWidth/2, windowHeight/2);
+        text('Click To Play', windowWidth / 2, windowHeight / 2);
     }
     // particleSystem.addParticle();
 
@@ -58,7 +59,6 @@ function draw() {
     // the level at one bin of the FFT spectrum. 
     // This level is like amplitude, often called "energy."
     // It will be a number between 0-255.
-
 }
 
 function windowResized() {

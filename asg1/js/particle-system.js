@@ -29,6 +29,7 @@ ParticleSystem.prototype.run = function () {
 
         // update x position (in case we change the bin count while live coding)
         particles[i].position.x = map(i, 0, binCount / 2, 0, width);
+        
     }
 
     // for (let i = this.particles.length - 1; i >= 0; i--) {
