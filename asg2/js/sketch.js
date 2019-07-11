@@ -1,3 +1,9 @@
+// Problems: world draw in update or not; multiple textures; world height 32 for mountain?
+// Minebox.js
+// cam.angleBetween(dis) < 90
+// dis < 100
+// width, height, depth
+
 let cam;
 let stoneTexture;
 let seaTexture;
