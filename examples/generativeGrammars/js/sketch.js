@@ -1,18 +1,18 @@
 let lsystem;
 
 function setup() {
-    createCanvas(500, 500);
+    createCanvas(windowWidth, windowHeight);
     strokeWeight(3);
     // Lsystem attributes
-    let axiom = "F+FGGG+F-F";
-    let rules = { "A": "AB", "B": "b" };
+    let axiom = "F";
+    let rules = { "F": "FF+[+F-F-F]-[-F+F+F]" };
     // let terms = ["a", "b"];
     // let nterms = ["A", "B"];
 
     lsystem = new LSystem(rules);
-
-    // lsystem.expand(axiom, 4);
-    lsystem.drawString(axiom, 90);
+    let s = lsystem.expand(axiom, 4);
+    // lsystem.expand(axiom, 2);
+    lsystem.drawString(s, 25);
 }
 
 function draw() {

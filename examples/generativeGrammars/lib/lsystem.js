@@ -2,9 +2,10 @@ class LSystem {
     constructor(rules) {
         this.x = width / 2;
         this.y = height / 2;
-        this.s = 25;
+        this.s = 10;
         this.angle = radians(90);
         this.rules = rules;
+        this.stack = [];
     }
 
     expand(axiom, n) {
@@ -29,7 +30,7 @@ class LSystem {
             }
             s = ns;
         }
-
+        return s;
     }
 
     drawString(s, theta) {
@@ -46,16 +47,20 @@ class LSystem {
                     this.angle -= radians(theta);
                     break;
                 case "[":
-
+                    this.stack.push([this.x, this.y]);
                     break;
                 case "]":
-
+                    endShape();
+                    beginShape();
+                    let xy = this.stack.pop();
+                    this.x = xy[0];
+                    this.y = xy[1];
+                    vertex(this.x, this.y);
                     break;
                 case "F":
                     this.x += cos(this.angle) * this.s;
                     this.y -= sin(this.angle) * this.s;
                     vertex(this.x, this.y);
-
                     break;
                 case "G":
                     endShape();
@@ -63,7 +68,6 @@ class LSystem {
                     this.x += cos(this.angle) * this.s;
                     this.y -= sin(this.angle) * this.s;
                     vertex(this.x, this.y);
-
                     break;
                 default:
                     console.log("Command doesn't exist");
