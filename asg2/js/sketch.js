@@ -1,79 +1,60 @@
 let cam;
-let dirtTexture;
+let stoneTexture;
+let seaTexture;
+let waterTexture;
+let sandTexture;
 let grassTexture;
+let dirtTexture;
 let MOVE_SPEED = 20;
+let WORLD_SEED = 101010;
+let input, button, instructions;
 
 function preload() {
-    dirtTexture = loadImage('assets/dirt.png');
+    stoneTexture = loadImage('assets/stone.png');
+    seaTexture = loadImage('assets/sea.png');
+    waterTexture = loadImage('assets/water.png');
+    sandTexture = loadImage('assets/sand.png');
     grassTexture = loadImage('assets/grass.png');
+    dirtTexture = loadImage('assets/dirt.png');
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL);
-    frameRate(60);
+    frameRate(30);
     pixelDensity(1);
     setAttributes('antialias', true);
-    normalMaterial();
+
+    input = createInput();
+    input.position(20, 65);
+
+    button = createButton('resetWorld');
+    button.position(input.x + input.width, 65);
+    button.mousePressed(resetWorld);
+
+    instructions = createElement('h3', 'WSAD & RF to move, Mouse to look around. <br />Enter number as seed to reset the world(otherwise will be random)');
+    instructions.position(20, 0);
+
+    textAlign(CENTER);
+    textSize(50);
+
     cam = createCamera();
-    // set initial pan angle
-    cam.pan(-0.6);
+
+    cam.pan(1.4);
     cam.tilt(0.9);
 
     world = new WorldGenerator();
 }
 
 function draw() {
-
-    background(0);
-
-
-    // every 160 frames, switch direction
-    // if (frameCount % 160 === 0) {
-    //     camX *= -1;
-    // }
+    background(125);
     updateCameraLocation()
     world.draw();
-    // rotateX(frameCount * 0.01);
-    // translate(-100, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-    // translate(35, 0, 0);
-    // box(20);
-
-    // camX = 0;
-    // camY = 0;
 }
 
 function mouseDragged() {
     cam.pan(map(event.movementX, 0, -500, 0, 1));
     cam.tilt(map(event.movementY, 0, 500, 0, 1));
-
-    // if (mouseButton == LEFT) {
-    //     mouseNowX += mouseX - pmouseX;
-    //     mouseNowY += mouseY - pmouseY;
-    // }
-    // console.log(event.movementX, event.movementY);
 }
-// function keyPressed() {
-//     if (key === 'w') {
-//         cam.move(0, 0, 5);
-//     } else if (key === 's') {
-//         // cam.move(map(-1, 0, -500, 0, 1));
-//     } else if (key === 'a') {
-
-//     } else if (key === 'd') {
-
-//     }
-// }
 
 function updateCameraLocation() {
     if (keyIsDown(87)) { // W to move forward
@@ -91,4 +72,15 @@ function updateCameraLocation() {
     } else if (keyIsDown(70)) { // F to move down
         cam.move(0, MOVE_SPEED, 0);
     }
+}
+
+
+function resetWorld() {
+    let newSeed = parseFloat(input.value());
+    if(isNaN(newSeed)) {
+        world = new WorldGenerator(Math.random()*99999999999);
+    } else {
+        world = new WorldGenerator(newSeed);
+    }
+    // instructions.html('World Reset');
 }
