@@ -4,7 +4,7 @@ function setup() {
     createCanvas(500, 500);
     strokeWeight(3);
     // Lsystem attributes
-    let axiom = "F+F";
+    let axiom = "F+FGGG+F-F";
     let rules = { "A": "AB", "B": "b" };
     // let terms = ["a", "b"];
     // let nterms = ["A", "B"];

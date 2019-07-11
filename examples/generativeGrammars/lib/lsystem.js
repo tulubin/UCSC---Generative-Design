@@ -58,6 +58,11 @@ class LSystem {
 
                     break;
                 case "G":
+                    endShape();
+                    beginShape();
+                    this.x += cos(this.angle) * this.s;
+                    this.y -= sin(this.angle) * this.s;
+                    vertex(this.x, this.y);
 
                     break;
                 default:
