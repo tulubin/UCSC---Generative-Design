@@ -14,6 +14,13 @@ let dirtTexture;
 let MOVE_SPEED = 20;
 let WORLD_SEED = 101010;
 let input, button, instructions;
+let BLOCK_SIZE = 16;
+let WORLD_SIZE = 32;
+let WORLD_WIDTH = 128;
+let WORLD_HEIGHT = 32;
+let WORLD_DEPTH = 128;
+let GRADE = 0.025;
+let VIEW_DIS = 30 * BLOCK_SIZE;
 
 function preload() {
     stoneTexture = loadImage('assets/stone.png');
@@ -44,11 +51,17 @@ function setup() {
     textSize(50);
 
     cam = createCamera();
-
-    cam.pan(1.4);
-    cam.tilt(0.9);
+    cam.setPosition(0, -WORLD_HEIGHT * BLOCK_SIZE, 0);
+    // cam.pan(1.8);
+    // cam.tilt(0.9);
 
     world = new WorldGenerator();
+
+    // let vCube = createVector(100 - cam.eyeX, 100 - cam.eyeY, 100 - cam.eyeZ);
+    // let vCam = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ);
+
+    // console.log(vCube);
+    
 }
 
 function draw() {
@@ -78,13 +91,17 @@ function updateCameraLocation() {
     } else if (keyIsDown(70)) { // F to move down
         cam.move(0, MOVE_SPEED, 0);
     }
+    // let vCube = createVector(100 - cam.eyeX, 100 - cam.eyeY, 100 - cam.eyeZ);
+    // let vCam = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ);
+    // console.log(cam.centerX, cam.centerY, cam.centerZ);
+    // console.log(vCam);
 }
 
 
 function resetWorld() {
     let newSeed = parseFloat(input.value());
-    if(isNaN(newSeed)) {
-        world = new WorldGenerator(Math.random()*99999999999);
+    if (isNaN(newSeed)) {
+        world = new WorldGenerator(Math.random() * 99999999999);
     } else {
         world = new WorldGenerator(newSeed);
     }
