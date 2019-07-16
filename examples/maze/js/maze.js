@@ -26,8 +26,6 @@ function generateMaze(world, init, adj) {
             cNode = stack.pop();
         }
     }
-
-
 }
 
 function removeWall(world, cNode, rNode) {
@@ -61,5 +59,5 @@ function getRandomNeighbour(cNode, adj, visited) {
             unvisitedNeighbours.push(n);
         }
     }
-    return unvisitedNeighbours;
+    return random(unvisitedNeighbours);
 }
