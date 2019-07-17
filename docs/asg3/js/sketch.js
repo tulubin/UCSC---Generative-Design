@@ -1,4 +1,3 @@
-
 const BODYSIZE = 32;
 const PLAYER_SPEED = 2;
 const NPC_SPEED = 0.0015;
@@ -12,7 +11,7 @@ let timeY = 1;
 let talking = false;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(windowWidth * 0.9, windowHeight * 0.9);
     frameRate(60);
 
     playerX = width / 2;
@@ -21,48 +20,35 @@ function setup() {
     npcX = width / 2;
     npcY = height * 0.2;
 
+    npc = new NPC();
 }
 
 function draw() {
     clear();
 
-
-
-
     if (!talking) {
-        if (keyIsDown(87) && playerY > BODYSIZE) { // W
+        if ((keyIsDown(87) || keyIsDown(38)) && playerY > BODYSIZE) { // W
             playerY -= PLAYER_SPEED;
-        } else if (keyIsDown(83) && playerY < height - BODYSIZE) { // S
+        } else if ((keyIsDown(83) || keyIsDown(40)) && playerY < height - BODYSIZE) { // S
             playerY += PLAYER_SPEED;
         }
-        if (keyIsDown(65) && playerX > BODYSIZE) { // A
+        if ((keyIsDown(65) || keyIsDown(37)) && playerX > BODYSIZE) { // A
             playerX -= PLAYER_SPEED;
-        } else if (keyIsDown(68) && playerX < width - BODYSIZE) { // D
+        } else if ((keyIsDown(68) || keyIsDown(39)) && playerX < width - BODYSIZE) { // D
             playerX += PLAYER_SPEED;
-        }
-        timeX += NPC_SPEED;
-        timeY += NPC_SPEED;
-        if (distanceBetween(playerX, playerY, npcX, npcY) < 50) {
-            textSize(16);
-            fill(150);
-            text('Press E to talk', npcX + 15, npcY - 15);
         }
     }
 
-    npcX = noise(timeX) * width;
-    npcY = noise(timeY) * height;
+    npc.draw();
     fill(51);
-    ellipse(npcX, npcY, BODYSIZE, BODYSIZE);
     ellipse(playerX, playerY, BODYSIZE, BODYSIZE);
-
-
 }
 
 function keyPressed() {
-    if (keyCode === 69) { // E
+    if (keyCode === 32) { // SPACEBAR
         if (distanceBetween(playerX, playerY, npcX, npcY) < 50 && !talking) {
             talking = true;
-            console.log("E");
+            console.log("SPACE");
         }
     } else if (keyCode === 78 && talking) { // N
         talking = false;

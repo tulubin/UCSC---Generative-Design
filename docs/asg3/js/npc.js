@@ -1,8 +1,24 @@
 let newGrammar;
+
 class NPC {
     constructor() {
     }
 
+    draw() {
+        if (!talking) {
+            timeX += NPC_SPEED;
+            timeY += NPC_SPEED;
+            if (distanceBetween(playerX, playerY, npcX, npcY) < 50) {
+                textSize(16);
+                fill(150);
+                text('Press SPACE to talk', npcX + 15, npcY - 15);
+            }
+        }
+        npcX = noise(timeX) * width;
+        npcY = noise(timeY) * height;
+        fill(51);
+        ellipse(npcX, npcY, BODYSIZE, BODYSIZE);
+    }
 
     generateGrammer() {
         // newGrammar attributes
