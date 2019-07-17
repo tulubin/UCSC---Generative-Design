@@ -1,114 +1,80 @@
-// Problems: world draw in update or not; multiple textures; world height 32 for mountain?
-// Minebox.js
-// cam.angleBetween(dis) < 90
-// dis < 100
-// width, height, depth
 
-let cam;
-let stoneTexture;
-let seaTexture;
-let waterTexture;
-let sandTexture;
-let grassTexture;
-let dirtTexture;
-let MOVE_SPEED = 80;
-let WORLD_SEED = 101010;
-let input, button, instructions;
-let BLOCK_SIZE = 128;
-// let WORLD_SIZE = 32;
-let WORLD_WIDTH = 128;
-let WORLD_HEIGHT = 32;
-let WORLD_DEPTH = 128;
-let GRADE = 0.02;
-let VIEW_DIS = 32 * BLOCK_SIZE;
-let SEA_LEVEL = 12;
+const BODYSIZE = 32;
+const PLAYER_SPEED = 2;
+const NPC_SPEED = 0.0015;
 
-function preload() {
-    stoneTexture = loadImage('assets/stone.png');
-    seaTexture = loadImage('assets/sea.png');
-    waterTexture = loadImage('assets/water.png');
-    sandTexture = loadImage('assets/sand.png');
-    grassTexture = loadImage('assets/grass.png');
-    dirtTexture = loadImage('assets/dirt.png');
-}
+let playerX = 0;
+let playerY = 0;
+let npcX = 0;
+let npcY = 0;
+let timeX = 0;
+let timeY = 1;
+let talking = false;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight, WEBGL);
-    frameRate(30);
-    pixelDensity(1);
-    setAttributes('antialias', true);
+    createCanvas(windowWidth, windowHeight);
+    frameRate(60);
 
-    input = createInput();
-    input.position(20, 65);
+    playerX = width / 2;
+    playerY = height / 2;
 
-    button = createButton('resetWorld');
-    button.position(input.x + input.width, 65);
-    button.mousePressed(resetWorld);
-
-    instructions = createElement('h3', 'WSAD & RF to move, Mouse to look around. <br />Enter number as seed to reset the world(otherwise will be random)');
-    instructions.position(20, 0);
-
-    textAlign(CENTER);
-    textSize(50);
-
-    cam = createCamera();
-    cam.setPosition(-WORLD_WIDTH / 2 * BLOCK_SIZE, -WORLD_HEIGHT * BLOCK_SIZE, WORLD_DEPTH / 2 * BLOCK_SIZE);
-    cam.pan(1.8);
-    cam.tilt(0.9);
-
-    world = new WorldGenerator();
-
-
-    // let vCube = createVector(100 - cam.eyeX, 100 - cam.eyeY, 100 - cam.eyeZ);
-    // let vCam = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ);
-    // let vCam = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ);
-    // console.log(cam.centerX, cam.centerY, cam.centerZ);
-    // console.log(vCam);
+    npcX = width / 2;
+    npcY = height * 0.2;
 
 }
 
 function draw() {
-    background(255);
-    updateCameraLocation()
-    world.draw();
-    // translate(100, 100, 100);
-    // let vCube = createVector(100 - cam.eyeX, 100 - cam.eyeY, 100 - cam.eyeZ);
-    // let vCam = createVector(cam.centerX - cam.eyeX, cam.centerY - cam.eyeY, cam.centerZ - cam.eyeZ);
-    // console.log(degrees(vCam.angleBetween(vCube)));
-    // if (degrees(vCam.angleBetween(vCube)) < 25)
-    //     box(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+    clear();
+
+
+
+
+    if (!talking) {
+        if (keyIsDown(87) && playerY > BODYSIZE) { // W
+            playerY -= PLAYER_SPEED;
+        } else if (keyIsDown(83) && playerY < height - BODYSIZE) { // S
+            playerY += PLAYER_SPEED;
+        }
+        if (keyIsDown(65) && playerX > BODYSIZE) { // A
+            playerX -= PLAYER_SPEED;
+        } else if (keyIsDown(68) && playerX < width - BODYSIZE) { // D
+            playerX += PLAYER_SPEED;
+        }
+        timeX += NPC_SPEED;
+        timeY += NPC_SPEED;
+        if (distanceBetween(playerX, playerY, npcX, npcY) < 50) {
+            textSize(16);
+            fill(150);
+            text('Press E to talk', npcX + 15, npcY - 15);
+        }
+    }
+
+    npcX = noise(timeX) * width;
+    npcY = noise(timeY) * height;
+    fill(51);
+    ellipse(npcX, npcY, BODYSIZE, BODYSIZE);
+    ellipse(playerX, playerY, BODYSIZE, BODYSIZE);
+
+
 }
 
-function mouseDragged() {
-    cam.pan(map(event.movementX, 0, -500, 0, 1));
-    cam.tilt(map(event.movementY, 0, 500, 0, 1));
+function keyPressed() {
+    if (keyCode === 69) { // E
+        if (distanceBetween(playerX, playerY, npcX, npcY) < 50 && !talking) {
+            talking = true;
+            console.log("E");
+        }
+    } else if (keyCode === 78 && talking) { // N
+        talking = false;
+        console.log("N");
+    }
+    return false; // prevent default
 }
 
-function updateCameraLocation() {
-    if (keyIsDown(87)) { // W to move forward
-        cam.move(0, 0, -MOVE_SPEED);
-    } else if (keyIsDown(83)) { // S to move backward
-        cam.move(0, 0, MOVE_SPEED);
-    }
-    if (keyIsDown(65)) { // A to move left
-        cam.move(-MOVE_SPEED, 0, 0);
-    } else if (keyIsDown(68)) { // D to move right
-        cam.move(MOVE_SPEED, 0, 0);
-    }
-    if (keyIsDown(82)) { // R to move up
-        cam.move(0, -MOVE_SPEED, 0);
-    } else if (keyIsDown(70)) { // F to move down
-        cam.move(0, MOVE_SPEED, 0);
-    }
-}
+function distanceBetween(x1, y1, x2, y2) {
+    var a = x1 - x2;
+    var b = y1 - y2;
 
-
-function resetWorld() {
-    let newSeed = parseFloat(input.value());
-    if (isNaN(newSeed)) {
-        world = new WorldGenerator(Math.random() * 99999999999);
-    } else {
-        world = new WorldGenerator(newSeed);
-    }
-    // instructions.html('World Reset');
+    var dis = Math.sqrt(a * a + b * b);
+    return dis;
 }
