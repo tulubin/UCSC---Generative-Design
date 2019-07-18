@@ -37,12 +37,12 @@ class NPC {
     generateArt(axiom) {
         // newGrammar attributes
         let generations = 5;
-        let ruleSet1 = { "F": "F-F++F+F-F-F", "G": "G+F-G" };
-        let ruleSet2 = { "F": "F-F++F+F-F-G", "G": "G+G" };
-        let probabilities = { "F": 0.8, "G": 0.3 };
+        let ruleSet1 = { "C": "C+L-C-L", "L": "[C]", "+": "++", "-": "--"};
+        let ruleSet2 = { "C": "C+C+L+L-L", "L": "C", "+": "+", "-": "-"};
+        let probabilities = { "C": 0.4, "L": 0.8, "+": 0.6, "-": 0.5, };
         newGrammar = new GenerativeGrammar(ruleSet1, ruleSet2, probabilities);
         let s = newGrammar.expand(axiom, generations);
         // newGrammar.expand(axiom, 2);
-        newGrammar.drawString(s, 72);
+        newGrammar.drawString(s, 120);
     }
 }

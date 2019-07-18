@@ -60,7 +60,7 @@ function keyPressed() {
             dia.draw();
         }
     } else if (keyCode === 89 && talking && diaCounter === 3) { // Y
-        let axiom = "F-F-F-F-F";
+        let axiom = "C+C--C-C";
         dia.changeText1("Do you want to see more?");
         dia.draw();
         npc.generateArt(axiom);
