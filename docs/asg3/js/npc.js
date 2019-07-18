@@ -9,27 +9,40 @@ class NPC {
             timeX += NPC_SPEED;
             timeY += NPC_SPEED;
             if (distanceBetween(playerX, playerY, npcX, npcY) < 50) {
-                textSize(16);
                 fill(150);
-                text('Press SPACE to talk', npcX + 15, npcY - 15);
+                strokeWeight(1);
+                stroke(51);
+                textSize(16);
+                text('Press SPACE to talk', npcX, npcY - 25);
             }
         }
         npcX = noise(timeX) * width;
-        npcY = noise(timeY) * height;
+        npcY = noise(timeY) * height / 2 + height / 2;
         fill(51);
+        if (npcX < BODYSIZE) {
+            npcX = BODYSIZE;
+        }
+        if (npcX > width - BODYSIZE) {
+            npcX = width - BODYSIZE;
+        }
+        if (npcY < height / 2 + BODYSIZE) {
+            npcY = height / 2 + BODYSIZE
+        }
+        if (npcY > height - BODYSIZE) {
+            npcY = height - BODYSIZE;
+        }
         ellipse(npcX, npcY, BODYSIZE, BODYSIZE);
     }
 
-    generateGrammer() {
+    generateArt(axiom) {
         // newGrammar attributes
-        let axiom = "F";
-        let rules = { "F": "FF+[+F-F-F]-[-F+F+F]" };
-        // let terms = ["a", "b"];
-        // let nterms = ["A", "B"];
-
-        newGrammar = new GenerativeGrammar(rules);
-        let s = newGrammar.expand(axiom, 4);
+        let generations = 5;
+        let ruleSet1 = { "F": "F-F++F+F-F-F", "G": "G+F-G" };
+        let ruleSet2 = { "F": "F-F++F+F-F-G", "G": "G+G" };
+        let probabilities = { "F": 0.8, "G": 0.3 };
+        newGrammar = new GenerativeGrammar(ruleSet1, ruleSet2, probabilities);
+        let s = newGrammar.expand(axiom, generations);
         // newGrammar.expand(axiom, 2);
-        newGrammar.drawString(s, 25);
+        newGrammar.drawString(s, 72);
     }
 }
