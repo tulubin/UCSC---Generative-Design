@@ -1,97 +1,115 @@
-class Individual {
-    constructor(indSize) {
-        this.indSize = indSize;
-        this.gens = new Array(indSize);
-        this.fitness = 0;
-
-        this.init();
-    }
-
-    init() {
-        for (let i = 0; i < this.indSize; i++) {
-            console.log("random:");
-            // this.gens[i] = int(random(2));
-            this.gens[i] = randomFeatures();
-            console.log("random:", andomFeatures());
-        }
-    }
-}
-
 class GeneticAlgorithm {
-    constructor(popSize, indSize, fitFunc, mutationRate) {
-        this.indSize = indSize;
+    constructor(popSize, mutationRate) {
         this.popSize = popSize;
-        this.fitFunc = fitFunc;
-
+        this.mutationRate = mutationRate;
         this.init();
     }
 
     init() {
-        this.population = new Array(this.popSize);
+        this.cars = [];
         for (let i = 0; i < this.popSize; i++) {
-            // Initialize individual i randomly
-            this.population[i] = new Individual(this.indSize);
+            let feats = Car.randomFeatures();
+            let pos = createVector(0, -100);
+            let car = new Car(pos.x, pos.y, "car" + i, feats);
+            this.cars.push(car);
         }
     }
 
-    evolve() {
-        this.evaluate();
+    evolve(leaderboard) {
+        let matingPool = this.select(leaderboard);
+        let newCars = this.reproduce(matingPool);
 
-        let matingPool = this.select();
-        let newPopulation = this.reproduce(matingPool);
-        this.mutate(newPopulation);
+        this.mutate(newCars);
 
-        this.population = newPopulation;
+        this.cars = newCars;
 
-        this.evaluate();
-        return this.best();
+        return this.best(leaderboard[0]);
     }
 
-    evaluate() {
-        for (let i = 0; i < this.popSize; i++) {
-            let individual = this.population[i];
-            individual.fitness = this.fitFunc(individual.gens)
-        }
-    }
-
-    select() {
+    select(leaderboard) {
         let matingPool = new Array();
 
         // Select this.popSize Individual to be the parents
         for (let i = 0; i < this.popSize; i++) {
-            let survivor = this.rouletteWheel();
+            let survivor = this.rouletteWheel(leaderboard);
             matingPool.push(survivor);
         }
-
         return matingPool;
     }
 
-    rouletteWheel() {
+    rouletteWheel(leaderboard) {
+        let totalProgress = 0;
+        for (let i = 0; i < this.popSize; i++) {
+            totalProgress += leaderboard[i].progress;
+        }
+        for (let i = 0; i < this.popSize; i++) {
+            leaderboard[i].progress /= totalProgress;
+        }
 
+        // sum up all fitnesses to 1
+        let r = random();
+        let progressSoFar = 0;
+        for (let i = 0; i < this.popSize; i++) {
+            progressSoFar += leaderboard[i].progress;
+            if (r < progressSoFar) {
+                return leaderboard[i];
+            }
+
+        }
+        return leaderboard[leaderboard.length - 1];
     }
 
+    // redesign !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     reproduce(matingPool) {
-        let newPopulation = new Array(this.popSize);
+        let newCars = new Array(this.popSize);
 
         for (let i = 0; i < this.popSize; i++) {
             let a = int(random(this.popSize));
             let b = int(random(this.popSize));
 
-            newPopulation[i] = this.crossover(matingPool[a], matingPool[b]);
+            newCars[i] = this.crossover(matingPool[a], matingPool[b], i);
         }
 
-        return newPopulation;
+        return newCars;
     }
 
-    crossover(parentA, parentB) {
+    crossover(parentA, parentB, index) {
+        let feats = new Array(maxIndex);
+        let midPoint = int(random(maxIndex));
+        for (let i = 0; i < maxIndex; i++) {
+            if (i < midPoint) {
+                feats[i] = parentA.feats[i];
+            } else {
+                feats[i] = parentB.feats[i];
+            }
+        }
 
+        let pos = createVector(0, -100);
+        let child = new Car(pos.x, pos.y, "car" + index, feats);
+
+        return child;
     }
 
-    mutate(newPopulation) {
-
+    mutate(newCars) {
+        for (let i = 0; i < this.popSize; i++) {
+            for (let j = 0; j < Car.angAmount * 2; j += 2) {
+                if (random() < this.mutationRate) {
+                    newCars[i].feats[j] = Car.randomAngle();
+                    newCars[i].feats[j + 1] = Car.randomMagnitude();
+                }
+            }
+            
+            for (let j = Car.angAmount * 2; j < maxIndex; j += 2) {
+                if (random() < this.mutationRate) {
+                    newCars[i].feats[j] = Car.randomVertex();
+                    newCars[i].feats[j + 1] = Car.randomRadius();
+                }
+            }
+        }
     }
 
-    best() {
-
+    best(bestCar) {
+        return bestCar;
     }
+
 }

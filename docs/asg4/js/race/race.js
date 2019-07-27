@@ -19,19 +19,19 @@ class Race {
     start() {
         this.leaderboards = {};
 
-        for(let i = 0; i < this.cars.length; i++) {
+        for (let i = 0; i < this.cars.length; i++) {
             let name = this.cars[i].name;
             let feats = this.cars[i].feats.slice(0);
 
-            this.leaderboards[name] = {"car": this.cars[i], "progress": 0};
+            this.leaderboards[name] = { "car": this.cars[i], "feats": feats, "progress": 0 };
         }
 
         this.running = true;
-        console.log("start!", this.running);
+        // console.log("start!", this.running);
     }
 
     stop() {
-        console.log("stop!");
+        // console.log("stop!");
         this.running = false;
     }
 
@@ -42,12 +42,12 @@ class Race {
     getLeaderboards() {
         let leaderboards = [];
 
-        for(let carName in this.leaderboards) {
+        for (let carName in this.leaderboards) {
             let car = this.leaderboards[carName].car;
             let feats = this.leaderboards[carName].feats;
             let progress = this.leaderboards[carName].progress;
 
-            leaderboards.push({"car": car, "progress": progress});
+            leaderboards.push({ "car": car, "name": carName, "feats": feats, "progress": progress });
         }
 
         leaderboards.sort((a, b) => (a.progress < b.progress) ? 1 : -1);
@@ -55,19 +55,19 @@ class Race {
     }
 
     getCarProgress(car) {
-        return constrain(car.getPosition().x/(this.terrain.length * this.terrain.step), 0, 1);
+        return constrain(car.getPosition().x / (this.terrain.length * this.terrain.step), 0, 1);
     }
 
     destroyBadCars() {
-        for(let i = 0; i < this.cars.length; i++) {
+        for (let i = 0; i < this.cars.length; i++) {
             // If car is stopped for some time
-            if(this.cars[i] && this.cars[i].getTimeStopped() > Race.maxStoppedTime) {
+            if (this.cars[i] && this.cars[i].getTimeStopped() > Race.maxStoppedTime) {
                 let stoppedCar = this.cars.splice(i, 1);
                 stoppedCar = null;
             }
 
             // If car out of bounds
-            if(this.cars[i] && this.cars[i].getPosition().y > height + Car.magRange[1]) {
+            if (this.cars[i] && this.cars[i].getPosition().y > height + Car.magRange[1]) {
                 let awayCar = this.cars.splice(i, 1);
                 awayCar = null;
             }
@@ -75,8 +75,8 @@ class Race {
     }
 
     updateLeaderboards() {
-        for(let i = 0; i < this.cars.length; i++) {
-            if(this.cars[i]) {
+        for (let i = 0; i < this.cars.length; i++) {
+            if (this.cars[i]) {
                 let name = this.cars[i].name;
                 this.leaderboards[name].progress = this.getCarProgress(this.cars[i]);
             }
@@ -84,8 +84,8 @@ class Race {
     }
 
     update() {
-        if(this.cars.length == 0) {
-            if(this.raceOver) {
+        if (this.cars.length == 0) {
+            if (this.raceOver) {
                 let finalLeaderboards = this.getLeaderboards();
                 this.raceOver(finalLeaderboards);
             }
@@ -101,9 +101,9 @@ class Race {
     }
 
     draw() {
-        if(this.running) {
-            for(let c of this.cars) {
-              c.draw();
+        if (this.running) {
+            for (let c of this.cars) {
+                c.draw();
             }
         }
 
