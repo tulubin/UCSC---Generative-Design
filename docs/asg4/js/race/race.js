@@ -23,7 +23,7 @@ class Race {
             let name = this.cars[i].name;
             let feats = this.cars[i].feats.slice(0);
 
-            this.leaderboards[name] = { "car": this.cars[i], "feats": feats, "progress": 0 };
+            this.leaderboards[name] = { "car": this.cars[i], "name": name, "feats": feats, "progress": 0 };
         }
 
         this.running = true;
@@ -46,6 +46,7 @@ class Race {
             let car = this.leaderboards[carName].car;
             let feats = this.leaderboards[carName].feats;
             let progress = this.leaderboards[carName].progress;
+            console.log(progress);
 
             leaderboards.push({ "car": car, "name": carName, "feats": feats, "progress": progress });
         }
@@ -93,8 +94,8 @@ class Race {
             this.running = false;
         }
         else {
-            this.destroyBadCars();
             this.updateLeaderboards();
+            this.destroyBadCars();
 
             this.running = true;
         }

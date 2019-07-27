@@ -11,6 +11,7 @@ let talbe = "";
 let bestCarTable = null;
 let bestInfo = "";
 let generation = 0;
+let bestGeneration = 0;
 
 function setup() {
     createCanvas(windowWidth * 0.9, windowHeight * 0.9, WEBGL);
@@ -24,12 +25,12 @@ function setup() {
     camera.ortho(-width / 2, width / 2, -height / 2, height / 2, 0, 10);
     camera.setPosition(0, 0, 0);
 
-    ga = new GeneticAlgorithm(popSize, 0.1);
+    ga = new GeneticAlgorithm(popSize, 0.02);
     maxIndex = Car.angAmount * 2 + Car.wheAmount * 2;
 
-    leaderboardTable = createDiv("<table><tr><th>Rank</th><th>Car</th><th>Progress</th></tr>");
+    leaderboardTable = createDiv("<h5>Leader Board</h5>");
     leaderboardTable.position(20, 5);
-    bestCarTable = createDiv("<table><tr><th>Generation:</th><th>/</th></tr><table><tr><th>BestCar:</th><th>/</th></tr><table><tr><th>Fitness:</th><th>/</th></tr>");
+    bestCarTable = createDiv("<h5>Generation: 0</h5><h5>BestCar: / Fitness: / </h5>");
     bestCarTable.position(width - 200, 5);
 
     // Create a terrain
@@ -61,7 +62,7 @@ function draw() {
 
         if (firstCar) {
             let firstPos = firstCar.getPosition();
-            camera.setPosition(firstPos.x + width / 5, firstPos.y, camera.eyeZ);
+            camera.setPosition(firstPos.x + width / 5, firstPos.y - height / 5, camera.eyeZ);
         }
     }
 }
@@ -74,13 +75,17 @@ function raceOverCallback(finalLeaderboards) {
     // console.log(finalLeaderboards);
     generation++;
 
+    // bestCar = finalLeaderboards[0];
+    // console.log(finalLeaderboards);
+    // console.log(finalLeaderboards[0].feats);
+    // console.log("!" + bestCar.progress.toFixed(3));
     table = updateTable(finalLeaderboards);
     leaderboardTable.remove();
     leaderboardTable = createDiv(table);
     leaderboardTable.position(20, 5);
 
     bestCar = ga.evolve(finalLeaderboards);
-
+    // console.log(bestCar);
     bestInfo = updateBestInfo(bestCar);
     bestCarTable.remove();
     bestCarTable = createDiv(bestInfo);
@@ -91,8 +96,10 @@ function raceOverCallback(finalLeaderboards) {
 }
 
 function updateTable(leaderboards) {
-    let table = "<table><tr><th>Rank</th><th>Name</th><th>Fitness</th></tr>";
+    let table = "<h5>Leader Board of generation " + generation + "</h5>";
+    table += "<table><tr><th>Rank</th><th>Name</th><th>Fitness</th></tr>";
 
+    // console.log(leaderboards[0].progress.toFixed(3));
     for (let i = 0; i < popSize; i++) {
         table += "<tr><td>" + (i + 1) + "</td><td>" + leaderboards[i].car.name + "</td><td>" + leaderboards[i].progress.toFixed(3) + "</td></tr>"
     }
@@ -102,12 +109,17 @@ function updateTable(leaderboards) {
 }
 
 function updateBestInfo(bestCar) {
-    let bestInfo = "<table><tr><th>Generation:</th><th>" + generation + "</th></tr>";
-    bestInfo += "<table><tr><th>BestCar:</th><th>" + bestCar.name + "</th></tr>";
-    bestInfo += "<table><tr><th>Fitness:</th><th>" + bestCar.progress.toFixed(3) + "</th></tr>";
+    let bestInfo = "<h5>Best Car So Far:</h5><h5>" + bestCar.name + " of generation " + bestGeneration + "</h5><h5>with fitness: " + bestCar.progress.toFixed(3) + "</h5>";
+    bestInfo += "<table><tr><th>Angle</th><th>Magnitude</th></tr>";
 
-    for (let i = 0; i < bestCar.feats.length; i++) {
-        bestInfo += "<table><tr><th>" + i + ":</th><th>" + bestCar.feats[i] + "</th></tr>";
+    for (let i = 0; i < Car.angAmount * 2; i += 2) {
+        bestInfo += "<tr><th>" + bestCar.feats[i].toFixed(1) + "</th><th>" + bestCar.feats[i + 1].toFixed(1) + "</th></tr>";
+    }
+
+    bestInfo += "<table><tr><th>Vertex</th><th>Radius</th></tr>";
+
+    for (let i = Car.angAmount * 2; i < Car.angAmount * 2 + Car.wheAmount * 2; i += 2) {
+        bestInfo += "<tr><th>" + bestCar.feats[i].toFixed(1) + "</th><th>" + bestCar.feats[i + 1].toFixed(1) + "</th></tr>";
     }
 
     return bestInfo;
