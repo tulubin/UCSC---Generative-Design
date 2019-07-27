@@ -3,7 +3,7 @@ class GeneticAlgorithm {
         this.popSize = popSize;
         this.mutationRate = mutationRate;
         this.init();
-        this.bestCarSoFar = null;
+
     }
 
     init() {
@@ -16,73 +16,58 @@ class GeneticAlgorithm {
         }
     }
 
-    evolve(leaderboard) {
-        let bc = leaderboard[0];
-        console.log(bc);
-        // console.log(bc.name);
-        // console.log(bc.progress);
-        // console.log("!" + bc.progress.toFixed(3));
-        this.best(bc.feats, bc.name, bc.progress);
-        let matingPool = this.select(leaderboard);
+    evolve(leaderboards) {
+        let bc = leaderboards[0];
+        this.best(bc);
+        let matingPool = this.select(leaderboards);
         let newCars = this.reproduce(matingPool);
-
         this.mutate(newCars);
-
         this.cars = newCars;
-
-        console.log("!!");
-        console.log(this.bestCarSoFar);
-        return this.bestCarSoFar;
     }
 
-    select(leaderboard) {
+    select(leaderboards) {
         let matingPool = new Array();
-
         // Select this.popSize Individual to be the parents
         for (let i = 0; i < this.popSize; i++) {
-            let survivor = this.rouletteWheel(leaderboard);
+            let survivor = this.rouletteWheel(leaderboards);
             matingPool.push(survivor);
         }
         return matingPool;
     }
 
-    rouletteWheel(leaderboard) {
+    rouletteWheel(leaderboards) {
         let totalProgress = 0;
+        let roulettePool = new Array();
         for (let i = 0; i < this.popSize; i++) {
-            totalProgress += leaderboard[i].progress;
+            totalProgress += leaderboards[i].progress;
+            roulettePool[i] = leaderboards[i].progress;
         }
         for (let i = 0; i < this.popSize; i++) {
-            leaderboard[i].progress /= totalProgress;
+            roulettePool[i] /= totalProgress;
         }
 
         // sum up all fitnesses to 1
         let r = random();
         let progressSoFar = 0;
         for (let i = 0; i < this.popSize; i++) {
-            progressSoFar += leaderboard[i].progress;
+            progressSoFar += roulettePool[i];
             if (r < progressSoFar) {
-                return leaderboard[i];
+                return leaderboards[i].car;
             }
 
         }
-        return leaderboard[leaderboard.length - 1];
+        return leaderboards[this.popSize - 1].car;
     }
 
     reproduce(matingPool) {
         let newCars = new Array(this.popSize);
 
         for (let i = 0; i < this.popSize; i++) {
-            let Superior = this.rouletteWheel(matingPool);
-            let randomOne = int(random(this.popSize));
-            // let SuperiorB = this.rouletteWheel(matingPool);
-            newCars[i] = this.crossover(Superior, matingPool[randomOne], i);
-        }
-        // for (let i = 0; i < this.popSize; i++) {
-        //     let a = int(random(this.popSize));
-        //     let b = int(random(this.popSize));
+            let a = int(random(this.popSize));
+            let b = int(random(this.popSize));
 
-        //     newCars[i] = this.crossover(matingPool[a], matingPool[b], i);
-        // }
+            newCars[i] = this.crossover(matingPool[a], matingPool[b], i);
+        }
 
         return newCars;
     }
@@ -167,34 +152,15 @@ class GeneticAlgorithm {
         }
     }
 
-    best(feats, name, progress) {
-        if (this.bestCarSoFar != null) {
-            if (this.bestCarSoFar.progress < bc.progress) {
-                // console.log("1");
-                // console.log(this.bestCarSoFar.progress);
-                // console.log(bc.progress);
-                this.feats = feats;
-                this.name = name;
-                this.progress = progress;
-                // this.bestCarSoFar.fitness = bc.fitness;
-                // return bc.car;
+    best(bc) {
+        if (bestCarSoFar != null) {
+            if (bestCarSoFar.progress < bc.progress) {
+                bestCarSoFar = bc;
                 bestGeneration = generation;
             }
-            // return this.bestCarSoFar;
         } else {
-            // console.log("2");
-            // console.log(this.bestCarSoFar.progress);
-            // console.log(bc);
-            // console.log(bc.progress.toFixed(3));
-            // let c = bc.car;
-            this.feats = feats;
-            this.name = name;
-            this.progress = progress;
-            // this.bestCarSoFar.fitness = bc.fitness;
-            // return bc.car;
+            bestCarSoFar = bc;
             bestGeneration = generation;
-            // console.log(this.bestCarSoFar);
-            // console.log(this.bestCarSoFar.progress.toFixed(3));
         }
     }
 }
