@@ -1,5 +1,7 @@
 
 let isClicked = false;
+let midiPlayer;
+let markov;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -11,6 +13,8 @@ function setup() {
 
     midiPlayer = new MidiPlayer();
     midiPlayer.loadMidis("data/midi_files.json", onMIDIsLoaded);
+
+    markov = new MarkovChain();
 }
 
 function draw() {
@@ -20,7 +24,7 @@ function draw() {
 function onButtonClicked() {
     isClicked = !isClicked;
 
-    if(isClicked) {
+    if (isClicked) {
         // console.log("start");
         button.elt.innerHTML = "Pause";
         midiPlayer.start();
@@ -32,15 +36,23 @@ function onButtonClicked() {
 }
 
 function onMIDIsLoaded(pianoRolls) {
-    // Pick random file to play
-    let pianoRoll = random(pianoRolls);
+    let midiText = "";
+    for (const pianoRoll of pianoRolls) {
+        midiPlayer.setPianoRoll(pianoRoll, tsCallback);
+        // Encode the piano roll (2D array) as string
+        let temp = midiPlayer.pianoRoll2Text(pianoRoll);
+        midiText += "# " + temp + " ";
+    }
+    midiText += "#";
+    // let pianoRoll = random(pianoRolls);
+    let midiArr = midiText.split(" ");
+    let trainingData = markov.train(midiArr);
+    let piece = markov.generatePiece(trainingData);
+    // console.log(trainingData);
+    console.log(piece);
 
-    midiPlayer.setPianoRoll(pianoRoll, tsCallback);
-
-    // Encode the piano roll (2D array) as string
-    let midiText = midiPlayer.pianoRoll2Text(pianoRoll);
-    console.log(midiText);
-    console.log("--------------------------------");
+    // trainingDatas.push(trainingData);
+    // console.log("-----------------------------------------------------------------");
 }
 
 function tsCallback(currentTs, notesOn) {
