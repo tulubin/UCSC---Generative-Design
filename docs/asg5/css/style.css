@@ -1,0 +1,10 @@
+h5 {
+    margin: 2;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    width: 30%;
+    height: 20px;
+    border: 1px solid black;
+}
