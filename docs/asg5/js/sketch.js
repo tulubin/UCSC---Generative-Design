@@ -3,6 +3,10 @@ let isClicked = false;
 let midiPlayer;
 let markov;
 
+
+// const createTestCafe = require('testcafe');
+// let testcafe = null;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     background(240);
@@ -18,7 +22,7 @@ function setup() {
 }
 
 function draw() {
-    // midiPlayer.draw();
+    midiPlayer.draw();
 }
 
 function onButtonClicked() {
@@ -36,9 +40,10 @@ function onButtonClicked() {
 }
 
 function onMIDIsLoaded(pianoRolls) {
+    // console.log(midiPlayer.pianoRoll2Text(pianoRolls[0]));
     let midiText = "";
     for (const pianoRoll of pianoRolls) {
-        midiPlayer.setPianoRoll(pianoRoll, tsCallback);
+        // midiPlayer.setPianoRoll(pianoRoll, tsCallback);
         // Encode the piano roll (2D array) as string
         let temp = midiPlayer.pianoRoll2Text(pianoRoll);
         midiText += "# " + temp + " ";
@@ -50,9 +55,14 @@ function onMIDIsLoaded(pianoRolls) {
     let piece = markov.generatePiece(trainingData);
     // console.log(trainingData);
     console.log(piece);
-
-    // trainingDatas.push(trainingData);
-    // console.log("-----------------------------------------------------------------");
+    
+    
+    let midi = midiPlayer.text2Midi(piece);
+    
+    let midiData = midiPlayer.parseMidi(midi);
+    let pianoRoll = midiPlayer.notes2PianoRoll(midiData.duration, midiData.notes);
+    
+    midiPlayer.setPianoRoll(pianoRoll, tsCallback);
 }
 
 function tsCallback(currentTs, notesOn) {

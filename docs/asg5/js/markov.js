@@ -1,4 +1,6 @@
-let ilegalChars = { "": 0 };
+let ilegalChars = { "": 0, "undefined": 0 };
+// let ilegalChars = {  };
+// let ilegalCharsB = { "": 0, "#": 0, "undefined": 0 };
 
 class MarkovChain {
     constructor() {
@@ -6,13 +8,16 @@ class MarkovChain {
     }
 
     generatePiece(td) {
+        let i = 500;
         let ne = this.sample(td, "#");
         let piece = "";
-        while (ne !== "#") {
-            piece += ne;
+        while (ne !== "#" && i > 0) {
+            piece += ne + " ";
             ne = this.sample(td, ne);
+            i--;
         }
-        return piece;
+        let newPiece = piece.slice(0, -1);
+        return newPiece;
     }
 
     train(midiArr) {

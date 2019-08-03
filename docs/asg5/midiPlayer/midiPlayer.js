@@ -136,8 +136,8 @@ class MidiPlayer {
 
                 track.addNote({
                     midi : pitch,
-                    time : ts * tsDuration,
-                    duration: duration * tsDuration
+                    time : ts * this.tsDuration,
+                    duration: duration * this.tsDuration
                 });
             }
         }
