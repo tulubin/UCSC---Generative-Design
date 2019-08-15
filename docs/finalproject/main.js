@@ -51,7 +51,7 @@ function OnAfterlayoutstart(runtime) {
 
 function spawnMeteorite(runtime) {
 	ga = new GeneticAlgorithm(globalPopSize, 0.4, runtime);
-	meteoriteStart = true;
+	
 	/*MeteoriteInstInstance.Create(runtime);
 	globalThis.setTimeout(() => spawnMeteorite(runtime), spawnCD / runtime.globalVars.GlobalTimeSpeed);*/
 }
@@ -129,7 +129,6 @@ class MeteoriteInstInstance extends ISpriteInstance {
 
 		/*let meteoriteMass = Math.min(noise(meteoriteTargetX * 10, meteoriteTargetY * 10) * 70, FIGHTER_SPEED);*/
 		let r = Math.random();
-		console.log(r);
 		let spawnX = 0;
 		let spawnY = 0;
 		if (r > 0.5) {
@@ -163,6 +162,7 @@ class Round {
 		this.meteorites = meteorites;
 		this.roundOver = roundOver;
 		this.running = false;
+		meteoriteStart = true;
 		this.runtime = runtime;
 		this.start();
 	}
