@@ -63,7 +63,8 @@ function Tick(runtime) {
 		if (currentMeteorite === globalPopSize) {
 			currentMeteorite = 0;
 			ga.setPop(runtime);
-			round = new Round(ga.meteorites, roundOverCallback, runtime);
+            round = new Round(ga.meteorites, roundOverCallback, runtime);
+            meteoriteStart = true;
 		}
 		/*globalThis.setTimeout(() => MeteoriteInstInstance.Create(runtime), spawnCD);*/
 		for (const fighterInstance of runtime.objects.Fighter.instances()) {
@@ -129,6 +130,7 @@ class MeteoriteInstInstance extends ISpriteInstance {
 
 		/*let meteoriteMass = Math.min(noise(meteoriteTargetX * 10, meteoriteTargetY * 10) * 70, FIGHTER_SPEED);*/
 		let r = Math.random();
+		console.log(r);
 		let spawnX = 0;
 		let spawnY = 0;
 		if (r > 0.5) {
@@ -162,7 +164,6 @@ class Round {
 		this.meteorites = meteorites;
 		this.roundOver = roundOver;
 		this.running = false;
-		meteoriteStart = true;
 		this.runtime = runtime;
 		this.start();
 	}
